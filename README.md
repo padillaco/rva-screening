@@ -30,7 +30,7 @@ The application is built with Python and [Flask](http://flask.pocoo.org/).
 * Change into the project directory: ```cd rva-screening```
 * Install Python requirements: ```pip install -r requirements.txt```
 * Install front end requirements: ```npm install``` and `npm install gulp -g`
-* Create two databases: 
+* Create two databases:
 
 ```bash
 createdb rva-screening
@@ -40,8 +40,8 @@ createdb rva-screening-test
 * Add the HSTORE extension
 
 ```bash
-psql rva-screening -c CREATE EXTENSION hstore;
-psql rva-screening-test -c CREATE EXTENSION hstore;
+psql -d rva-screening -c 'CREATE EXTENSION hstore';
+psql -d rva-screening-test -c 'CREATE EXTENSION hstore';
 ```
 
 * Set up the database: ```make new_db```

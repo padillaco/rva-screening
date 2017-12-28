@@ -10,7 +10,7 @@ class Config(object):
     PROJECT_ROOT = os.path.abspath(os.path.dirname(__file__))
     PERMANENT_SESSION_LIFETIME = timedelta(minutes=15)
 
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'postgres://@localhost/screener')
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL', 'postgres://@localhost/rva-screening')
 
     UPLOAD_FOLDER = 'var/uploads/documentimages'
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024
@@ -26,7 +26,7 @@ class Config(object):
     BABEL_DEFAULT_TIMEZONE = os.environ.get('BABEL_DEFAULT_TIMEZONE', 'America/New_York')
 
     SECURITY_PASSWORD_HASH = 'bcrypt'
-    SECURITY_PASSWORD_SALT = os.environ.get('SECURITY_PASSWORD_SALT')
+    SECURITY_PASSWORD_SALT = os.environ.get('SECURITY_PASSWORD_SALT', "ldsgjals;jslgjowejnavvnasdlgnjewog233245252")
     SECURITY_EMAIL_SENDER = 'ZipScreen <richmond@codeforamerica.org>'
     SECURITY_POST_LOGIN_VIEW = '/'
     SECURITY_POST_LOGOUT_VIEW = '/login'

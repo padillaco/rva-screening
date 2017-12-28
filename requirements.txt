@@ -38,7 +38,7 @@ nose==1.3.6
 passlib==1.6.5
 pep8==1.5.7
 Pillow==2.9.0
-psycopg2==2.6
+psycopg2==2.7.1
 pycparser==2.10
 pycrypto==2.6.1
 pyflakes==0.8.1
@@ -58,4 +58,4 @@ Wand==0.4.1
 webassets==0.10.1
 Werkzeug==0.10.1
 WTForms==2.0.2
-xhtml2pdf==0.0.6
+xhtml2pdf==0.2b1

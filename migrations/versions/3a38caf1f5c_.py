@@ -1,13 +1,13 @@
 """empty message
 
-Revision ID: 427922082575
+Revision ID: 3a38caf1f5c
 Revises: None
-Create Date: 2015-10-07 20:04:39.233407
+Create Date: 2017-12-27 14:48:43.704192
 
 """
 
 # revision identifiers, used by Alembic.
-revision = '427922082575'
+revision = '3a38caf1f5c'
 down_revision = None
 
 from alembic import op
@@ -57,12 +57,15 @@ def upgrade():
     sa.Column('created', sa.DateTime(), nullable=True),
     sa.Column('last_modified', sa.DateTime(), nullable=True),
     sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('deleted', sa.DateTime(), nullable=True),
+    sa.Column('deleted_by_id', sa.Integer(), nullable=True),
     sa.Column('full_name', sa.String(length=128), nullable=True),
     sa.Column('first_name', sa.String(length=64), nullable=True),
     sa.Column('middle_name', sa.String(length=64), nullable=True),
     sa.Column('last_name', sa.String(length=64), nullable=True),
     sa.Column('dob', sa.Date(), nullable=True),
     sa.Column('ssn', sa.String(length=11), nullable=True),
+    sa.Column('medical_home', sa.String(length=32), nullable=True),
     sa.Column('email', sa.String(length=64), nullable=True),
     sa.Column('gender', sa.String(length=2), nullable=True),
     sa.Column('transgender', sa.String(length=3), nullable=True),
@@ -120,7 +123,73 @@ def upgrade():
     sa.Column('last_modified_by_id', sa.Integer(), nullable=True),
     sa.Column('created_by_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['created_by_id'], ['app_user.id'], name='fk_created_by_id', use_alter=True),
+    sa.ForeignKeyConstraint(['deleted_by_id'], ['app_user.id'], name='fk_deleted_by_id', use_alter=True),
     sa.ForeignKeyConstraint(['last_modified_by_id'], ['app_user.id'], name='fk_last_modified_by_id', use_alter=True),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('phone_number',
+    sa.Column('created', sa.DateTime(), nullable=True),
+    sa.Column('last_modified', sa.DateTime(), nullable=True),
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('patient_id', sa.Integer(), nullable=True),
+    sa.Column('phone_number', sa.String(length=32), nullable=True),
+    sa.Column('number_description', sa.String(length=64), nullable=True),
+    sa.Column('number_description_other', sa.String(length=64), nullable=True),
+    sa.Column('primary_yn', sa.String(length=1), nullable=True),
+    sa.Column('last_modified_by_id', sa.Integer(), nullable=True),
+    sa.Column('created_by_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['created_by_id'], ['app_user.id'], name='fk_created_by_id', use_alter=True),
+    sa.ForeignKeyConstraint(['last_modified_by_id'], ['app_user.id'], name='fk_last_modified_by_id', use_alter=True),
+    sa.ForeignKeyConstraint(['patient_id'], ['patient.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('income_source',
+    sa.Column('created', sa.DateTime(), nullable=True),
+    sa.Column('last_modified', sa.DateTime(), nullable=True),
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('patient_id', sa.Integer(), nullable=True),
+    sa.Column('source', sa.String(length=64), nullable=True),
+    sa.Column('monthly_amount', sa.Integer(), nullable=True),
+    sa.Column('last_modified_by_id', sa.Integer(), nullable=True),
+    sa.Column('created_by_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['created_by_id'], ['app_user.id'], name='fk_created_by_id', use_alter=True),
+    sa.ForeignKeyConstraint(['last_modified_by_id'], ['app_user.id'], name='fk_last_modified_by_id', use_alter=True),
+    sa.ForeignKeyConstraint(['patient_id'], ['patient.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('household_member',
+    sa.Column('created', sa.DateTime(), nullable=True),
+    sa.Column('last_modified', sa.DateTime(), nullable=True),
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('patient_id', sa.Integer(), nullable=True),
+    sa.Column('full_name', sa.String(length=64), nullable=True),
+    sa.Column('dob', sa.Date(), nullable=True),
+    sa.Column('ssn', sa.String(length=11), nullable=True),
+    sa.Column('relationship', sa.String(length=32), nullable=True),
+    sa.Column('last_modified_by_id', sa.Integer(), nullable=True),
+    sa.Column('created_by_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['created_by_id'], ['app_user.id'], name='fk_created_by_id', use_alter=True),
+    sa.ForeignKeyConstraint(['last_modified_by_id'], ['app_user.id'], name='fk_last_modified_by_id', use_alter=True),
+    sa.ForeignKeyConstraint(['patient_id'], ['patient.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('address',
+    sa.Column('created', sa.DateTime(), nullable=True),
+    sa.Column('last_modified', sa.DateTime(), nullable=True),
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('patient_id', sa.Integer(), nullable=True),
+    sa.Column('address1', sa.String(length=64), nullable=True),
+    sa.Column('address2', sa.String(length=64), nullable=True),
+    sa.Column('city', sa.String(length=64), nullable=True),
+    sa.Column('state', sa.String(length=2), nullable=True),
+    sa.Column('zip_code', sa.String(length=10), nullable=True),
+    sa.Column('address_description', sa.String(length=64), nullable=True),
+    sa.Column('address_description_other', sa.String(length=64), nullable=True),
+    sa.Column('last_modified_by_id', sa.Integer(), nullable=True),
+    sa.Column('created_by_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['created_by_id'], ['app_user.id'], name='fk_created_by_id', use_alter=True),
+    sa.ForeignKeyConstraint(['last_modified_by_id'], ['app_user.id'], name='fk_last_modified_by_id', use_alter=True),
+    sa.ForeignKeyConstraint(['patient_id'], ['patient.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('document_image',
@@ -138,6 +207,24 @@ def upgrade():
     sa.ForeignKeyConstraint(['created_by_id'], ['app_user.id'], name='fk_created_by_id', use_alter=True),
     sa.ForeignKeyConstraint(['last_modified_by_id'], ['app_user.id'], name='fk_last_modified_by_id', use_alter=True),
     sa.ForeignKeyConstraint(['patient_id'], ['patient.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('service_location',
+    sa.Column('created', sa.DateTime(), nullable=True),
+    sa.Column('last_modified', sa.DateTime(), nullable=True),
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('service_id', sa.Integer(), nullable=True),
+    sa.Column('name', sa.String(length=64), nullable=True),
+    sa.Column('contact_name', sa.String(length=64), nullable=True),
+    sa.Column('phone_number', sa.String(length=32), nullable=True),
+    sa.Column('address', sa.String(length=64), nullable=True),
+    sa.Column('latitude', sa.Float(), nullable=True),
+    sa.Column('longitude', sa.Float(), nullable=True),
+    sa.Column('last_modified_by_id', sa.Integer(), nullable=True),
+    sa.Column('created_by_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['created_by_id'], ['app_user.id'], name='fk_created_by_id', use_alter=True),
+    sa.ForeignKeyConstraint(['last_modified_by_id'], ['app_user.id'], name='fk_last_modified_by_id', use_alter=True),
+    sa.ForeignKeyConstraint(['service_id'], ['service.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('employer',
@@ -171,6 +258,14 @@ def upgrade():
     sa.ForeignKeyConstraint(['patient_id'], ['patient.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('service_translation',
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('service_id', sa.Integer(), nullable=True),
+    sa.Column('language_code', sa.String(length=16), nullable=True),
+    sa.Column('description', sa.Text(), nullable=True),
+    sa.ForeignKeyConstraint(['service_id'], ['service.id'], ondelete='CASCADE'),
+    sa.PrimaryKeyConstraint('id')
+    )
     op.create_table('referral_permission',
     sa.Column('created', sa.DateTime(), nullable=True),
     sa.Column('last_modified', sa.DateTime(), nullable=True),
@@ -183,103 +278,6 @@ def upgrade():
     sa.ForeignKeyConstraint(['from_service_id'], ['service.id'], ),
     sa.ForeignKeyConstraint(['last_modified_by_id'], ['app_user.id'], name='fk_last_modified_by_id', use_alter=True),
     sa.ForeignKeyConstraint(['to_service_id'], ['service.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('address',
-    sa.Column('created', sa.DateTime(), nullable=True),
-    sa.Column('last_modified', sa.DateTime(), nullable=True),
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('patient_id', sa.Integer(), nullable=True),
-    sa.Column('address1', sa.String(length=64), nullable=True),
-    sa.Column('address2', sa.String(length=64), nullable=True),
-    sa.Column('city', sa.String(length=64), nullable=True),
-    sa.Column('state', sa.String(length=2), nullable=True),
-    sa.Column('zip_code', sa.String(length=10), nullable=True),
-    sa.Column('address_description', sa.String(length=64), nullable=True),
-    sa.Column('address_description_other', sa.String(length=64), nullable=True),
-    sa.Column('last_modified_by_id', sa.Integer(), nullable=True),
-    sa.Column('created_by_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['created_by_id'], ['app_user.id'], name='fk_created_by_id', use_alter=True),
-    sa.ForeignKeyConstraint(['last_modified_by_id'], ['app_user.id'], name='fk_last_modified_by_id', use_alter=True),
-    sa.ForeignKeyConstraint(['patient_id'], ['patient.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('service_referral_email',
-    sa.Column('created', sa.DateTime(), nullable=True),
-    sa.Column('last_modified', sa.DateTime(), nullable=True),
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('service_id', sa.Integer(), nullable=True),
-    sa.Column('email', sa.String(length=64), nullable=True),
-    sa.Column('last_modified_by_id', sa.Integer(), nullable=True),
-    sa.Column('created_by_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['created_by_id'], ['app_user.id'], name='fk_created_by_id', use_alter=True),
-    sa.ForeignKeyConstraint(['last_modified_by_id'], ['app_user.id'], name='fk_last_modified_by_id', use_alter=True),
-    sa.ForeignKeyConstraint(['service_id'], ['service.id'], ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('service_location',
-    sa.Column('created', sa.DateTime(), nullable=True),
-    sa.Column('last_modified', sa.DateTime(), nullable=True),
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('service_id', sa.Integer(), nullable=True),
-    sa.Column('name', sa.String(length=64), nullable=True),
-    sa.Column('contact_name', sa.String(length=64), nullable=True),
-    sa.Column('phone_number', sa.String(length=32), nullable=True),
-    sa.Column('address', sa.String(length=64), nullable=True),
-    sa.Column('latitude', sa.Float(), nullable=True),
-    sa.Column('longitude', sa.Float(), nullable=True),
-    sa.Column('last_modified_by_id', sa.Integer(), nullable=True),
-    sa.Column('created_by_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['created_by_id'], ['app_user.id'], name='fk_created_by_id', use_alter=True),
-    sa.ForeignKeyConstraint(['last_modified_by_id'], ['app_user.id'], name='fk_last_modified_by_id', use_alter=True),
-    sa.ForeignKeyConstraint(['service_id'], ['service.id'], ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('sliding_scale',
-    sa.Column('created', sa.DateTime(), nullable=True),
-    sa.Column('last_modified', sa.DateTime(), nullable=True),
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('service_id', sa.Integer(), nullable=True),
-    sa.Column('scale_name', sa.String(length=64), nullable=True),
-    sa.Column('fpl_low', sa.Float(), nullable=True),
-    sa.Column('fpl_high', sa.Float(), nullable=True),
-    sa.Column('last_modified_by_id', sa.Integer(), nullable=True),
-    sa.Column('created_by_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['created_by_id'], ['app_user.id'], name='fk_created_by_id', use_alter=True),
-    sa.ForeignKeyConstraint(['last_modified_by_id'], ['app_user.id'], name='fk_last_modified_by_id', use_alter=True),
-    sa.ForeignKeyConstraint(['service_id'], ['service.id'], ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('household_member',
-    sa.Column('created', sa.DateTime(), nullable=True),
-    sa.Column('last_modified', sa.DateTime(), nullable=True),
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('patient_id', sa.Integer(), nullable=True),
-    sa.Column('full_name', sa.String(length=64), nullable=True),
-    sa.Column('dob', sa.Date(), nullable=True),
-    sa.Column('ssn', sa.String(length=11), nullable=True),
-    sa.Column('relationship', sa.String(length=32), nullable=True),
-    sa.Column('last_modified_by_id', sa.Integer(), nullable=True),
-    sa.Column('created_by_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['created_by_id'], ['app_user.id'], name='fk_created_by_id', use_alter=True),
-    sa.ForeignKeyConstraint(['last_modified_by_id'], ['app_user.id'], name='fk_last_modified_by_id', use_alter=True),
-    sa.ForeignKeyConstraint(['patient_id'], ['patient.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('phone_number',
-    sa.Column('created', sa.DateTime(), nullable=True),
-    sa.Column('last_modified', sa.DateTime(), nullable=True),
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('patient_id', sa.Integer(), nullable=True),
-    sa.Column('phone_number', sa.String(length=32), nullable=True),
-    sa.Column('number_description', sa.String(length=64), nullable=True),
-    sa.Column('number_description_other', sa.String(length=64), nullable=True),
-    sa.Column('primary_yn', sa.String(length=1), nullable=True),
-    sa.Column('last_modified_by_id', sa.Integer(), nullable=True),
-    sa.Column('created_by_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['created_by_id'], ['app_user.id'], name='fk_created_by_id', use_alter=True),
-    sa.ForeignKeyConstraint(['last_modified_by_id'], ['app_user.id'], name='fk_last_modified_by_id', use_alter=True),
-    sa.ForeignKeyConstraint(['patient_id'], ['patient.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('app_user',
@@ -308,58 +306,32 @@ def upgrade():
     sa.ForeignKeyConstraint(['service_id'], ['service.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('income_source',
+    op.create_table('service_referral_email',
     sa.Column('created', sa.DateTime(), nullable=True),
     sa.Column('last_modified', sa.DateTime(), nullable=True),
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('patient_id', sa.Integer(), nullable=True),
-    sa.Column('source', sa.String(length=64), nullable=True),
-    sa.Column('monthly_amount', sa.Integer(), nullable=True),
+    sa.Column('service_id', sa.Integer(), nullable=True),
+    sa.Column('email', sa.String(length=64), nullable=True),
     sa.Column('last_modified_by_id', sa.Integer(), nullable=True),
     sa.Column('created_by_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['created_by_id'], ['app_user.id'], name='fk_created_by_id', use_alter=True),
     sa.ForeignKeyConstraint(['last_modified_by_id'], ['app_user.id'], name='fk_last_modified_by_id', use_alter=True),
-    sa.ForeignKeyConstraint(['patient_id'], ['patient.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('service_translation',
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('service_id', sa.Integer(), nullable=True),
-    sa.Column('language_code', sa.String(length=16), nullable=True),
-    sa.Column('description', sa.Text(), nullable=True),
     sa.ForeignKeyConstraint(['service_id'], ['service.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
-    op.create_table('patient_screening_result',
+    op.create_table('sliding_scale',
     sa.Column('created', sa.DateTime(), nullable=True),
     sa.Column('last_modified', sa.DateTime(), nullable=True),
     sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('patient_id', sa.Integer(), nullable=True),
     sa.Column('service_id', sa.Integer(), nullable=True),
-    sa.Column('eligible_yn', sa.String(length=1), nullable=True),
-    sa.Column('sliding_scale_id', sa.Integer(), nullable=True),
-    sa.Column('notes', sa.Text(), nullable=True),
+    sa.Column('scale_name', sa.String(length=64), nullable=True),
+    sa.Column('fpl_low', sa.Float(), nullable=True),
+    sa.Column('fpl_high', sa.Float(), nullable=True),
     sa.Column('last_modified_by_id', sa.Integer(), nullable=True),
     sa.Column('created_by_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['created_by_id'], ['app_user.id'], name='fk_created_by_id', use_alter=True),
     sa.ForeignKeyConstraint(['last_modified_by_id'], ['app_user.id'], name='fk_last_modified_by_id', use_alter=True),
-    sa.ForeignKeyConstraint(['patient_id'], ['patient.id'], ),
-    sa.ForeignKeyConstraint(['service_id'], ['service.id'], ),
-    sa.ForeignKeyConstraint(['sliding_scale_id'], ['sliding_scale.id'], ),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('roles_users',
-    sa.Column('created', sa.DateTime(), nullable=True),
-    sa.Column('last_modified', sa.DateTime(), nullable=True),
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('app_user_id', sa.Integer(), nullable=True),
-    sa.Column('role_id', sa.Integer(), nullable=True),
-    sa.Column('last_modified_by_id', sa.Integer(), nullable=True),
-    sa.Column('created_by_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['app_user_id'], ['app_user.id'], ),
-    sa.ForeignKeyConstraint(['created_by_id'], ['app_user.id'], name='fk_created_by_id', use_alter=True),
-    sa.ForeignKeyConstraint(['last_modified_by_id'], ['app_user.id'], name='fk_last_modified_by_id', use_alter=True),
-    sa.ForeignKeyConstraint(['role_id'], ['role.id'], ),
+    sa.ForeignKeyConstraint(['service_id'], ['service.id'], ondelete='CASCADE'),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('sliding_scale_fee',
@@ -375,24 +347,6 @@ def upgrade():
     sa.ForeignKeyConstraint(['created_by_id'], ['app_user.id'], name='fk_created_by_id', use_alter=True),
     sa.ForeignKeyConstraint(['last_modified_by_id'], ['app_user.id'], name='fk_last_modified_by_id', use_alter=True),
     sa.ForeignKeyConstraint(['sliding_scale_id'], ['sliding_scale.id'], ondelete='CASCADE'),
-    sa.PrimaryKeyConstraint('id')
-    )
-    op.create_table('patient_referral',
-    sa.Column('created', sa.DateTime(), nullable=True),
-    sa.Column('last_modified', sa.DateTime(), nullable=True),
-    sa.Column('id', sa.Integer(), nullable=False),
-    sa.Column('patient_id', sa.Integer(), nullable=True),
-    sa.Column('from_app_user_id', sa.Integer(), nullable=True),
-    sa.Column('to_service_id', sa.Integer(), nullable=True),
-    sa.Column('status', sa.String(length=9), nullable=True),
-    sa.Column('notes', sa.Text(), nullable=True),
-    sa.Column('last_modified_by_id', sa.Integer(), nullable=True),
-    sa.Column('created_by_id', sa.Integer(), nullable=True),
-    sa.ForeignKeyConstraint(['created_by_id'], ['app_user.id'], name='fk_created_by_id', use_alter=True),
-    sa.ForeignKeyConstraint(['from_app_user_id'], ['app_user.id'], ),
-    sa.ForeignKeyConstraint(['last_modified_by_id'], ['app_user.id'], name='fk_last_modified_by_id', use_alter=True),
-    sa.ForeignKeyConstraint(['patient_id'], ['patient.id'], ),
-    sa.ForeignKeyConstraint(['to_service_id'], ['service.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
     op.create_table('action_log',
@@ -424,30 +378,96 @@ def upgrade():
     sa.ForeignKeyConstraint(['patient_id'], ['patient.id'], ),
     sa.PrimaryKeyConstraint('id')
     )
+    op.create_table('patient_referral',
+    sa.Column('created', sa.DateTime(), nullable=True),
+    sa.Column('last_modified', sa.DateTime(), nullable=True),
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('patient_id', sa.Integer(), nullable=True),
+    sa.Column('from_app_user_id', sa.Integer(), nullable=True),
+    sa.Column('to_service_id', sa.Integer(), nullable=True),
+    sa.Column('status', sa.String(length=9), nullable=True),
+    sa.Column('notes', sa.Text(), nullable=True),
+    sa.Column('last_modified_by_id', sa.Integer(), nullable=True),
+    sa.Column('created_by_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['created_by_id'], ['app_user.id'], name='fk_created_by_id', use_alter=True),
+    sa.ForeignKeyConstraint(['from_app_user_id'], ['app_user.id'], ),
+    sa.ForeignKeyConstraint(['last_modified_by_id'], ['app_user.id'], name='fk_last_modified_by_id', use_alter=True),
+    sa.ForeignKeyConstraint(['patient_id'], ['patient.id'], ),
+    sa.ForeignKeyConstraint(['to_service_id'], ['service.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('roles_users',
+    sa.Column('created', sa.DateTime(), nullable=True),
+    sa.Column('last_modified', sa.DateTime(), nullable=True),
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('app_user_id', sa.Integer(), nullable=True),
+    sa.Column('role_id', sa.Integer(), nullable=True),
+    sa.Column('last_modified_by_id', sa.Integer(), nullable=True),
+    sa.Column('created_by_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['app_user_id'], ['app_user.id'], ),
+    sa.ForeignKeyConstraint(['created_by_id'], ['app_user.id'], name='fk_created_by_id', use_alter=True),
+    sa.ForeignKeyConstraint(['last_modified_by_id'], ['app_user.id'], name='fk_last_modified_by_id', use_alter=True),
+    sa.ForeignKeyConstraint(['role_id'], ['role.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('patient_referral_comment',
+    sa.Column('created', sa.DateTime(), nullable=True),
+    sa.Column('last_modified', sa.DateTime(), nullable=True),
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('patient_referral_id', sa.Integer(), nullable=True),
+    sa.Column('notes', sa.Text(), nullable=True),
+    sa.Column('last_modified_by_id', sa.Integer(), nullable=True),
+    sa.Column('created_by_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['created_by_id'], ['app_user.id'], name='fk_created_by_id', use_alter=True),
+    sa.ForeignKeyConstraint(['last_modified_by_id'], ['app_user.id'], name='fk_last_modified_by_id', use_alter=True),
+    sa.ForeignKeyConstraint(['patient_referral_id'], ['patient_referral.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
+    op.create_table('patient_screening_result',
+    sa.Column('created', sa.DateTime(), nullable=True),
+    sa.Column('last_modified', sa.DateTime(), nullable=True),
+    sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('patient_id', sa.Integer(), nullable=True),
+    sa.Column('patient_referral_id', sa.Integer(), nullable=True),
+    sa.Column('service_id', sa.Integer(), nullable=True),
+    sa.Column('eligible_yn', sa.String(length=1), nullable=True),
+    sa.Column('sliding_scale_id', sa.Integer(), nullable=True),
+    sa.Column('notes', sa.Text(), nullable=True),
+    sa.Column('last_modified_by_id', sa.Integer(), nullable=True),
+    sa.Column('created_by_id', sa.Integer(), nullable=True),
+    sa.ForeignKeyConstraint(['created_by_id'], ['app_user.id'], name='fk_created_by_id', use_alter=True),
+    sa.ForeignKeyConstraint(['last_modified_by_id'], ['app_user.id'], name='fk_last_modified_by_id', use_alter=True),
+    sa.ForeignKeyConstraint(['patient_id'], ['patient.id'], ),
+    sa.ForeignKeyConstraint(['patient_referral_id'], ['patient_referral.id'], ),
+    sa.ForeignKeyConstraint(['service_id'], ['service.id'], ),
+    sa.ForeignKeyConstraint(['sliding_scale_id'], ['sliding_scale.id'], ),
+    sa.PrimaryKeyConstraint('id')
+    )
     ### end Alembic commands ###
 
 
 def downgrade():
     ### commands auto generated by Alembic - please adjust! ###
+    op.drop_table('patient_screening_result')
+    op.drop_table('patient_referral_comment')
+    op.drop_table('roles_users')
+    op.drop_table('patient_referral')
     op.drop_table('unsaved_form')
     op.drop_table('action_log')
-    op.drop_table('patient_referral')
     op.drop_table('sliding_scale_fee')
-    op.drop_table('roles_users')
-    op.drop_table('patient_screening_result')
-    op.drop_table('service_translation')
-    op.drop_table('income_source')
-    op.drop_table('app_user')
-    op.drop_table('phone_number')
-    op.drop_table('household_member')
     op.drop_table('sliding_scale')
-    op.drop_table('service_location')
     op.drop_table('service_referral_email')
-    op.drop_table('address')
+    op.drop_table('app_user')
     op.drop_table('referral_permission')
+    op.drop_table('service_translation')
     op.drop_table('emergency_contact')
     op.drop_table('employer')
+    op.drop_table('service_location')
     op.drop_table('document_image')
+    op.drop_table('address')
+    op.drop_table('household_member')
+    op.drop_table('income_source')
+    op.drop_table('phone_number')
     op.drop_table('patient')
     op.drop_index(op.f('ix_role_default'), table_name='role')
     op.drop_table('role')

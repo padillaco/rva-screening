@@ -54,6 +54,8 @@ pip install -r requirements.txt
 make db_update
 ```
 
+AWS credentials are in 1Password for deploying and access static assets.
+
 **Testing**
 
 To run the tests, you'll need a new database. By default, the code looks for a database called 'screener_test'. Set the TEST_DATABASE_URL environment variable if you choose a different name.
